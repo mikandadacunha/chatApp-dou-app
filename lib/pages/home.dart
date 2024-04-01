@@ -15,8 +15,9 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 /// Trying to correct an error with my cod, this the user preferencesshared
-/// 
+///
 
 class _HomePageState extends State<HomePage> {
   bool search = false;
@@ -25,13 +26,14 @@ class _HomePageState extends State<HomePage> {
   /// the id of each user for the chatroom message
   late Stream<QuerySnapshot> chatRoomStream =
       DatabaseMethods().getChatRooms(widget.myUserName);
-/// Our chatlist of all message sent by me
+
+  /// Our chatlist of all message sent by me
   Widget chatRoomList() {
     return StreamBuilder<QuerySnapshot>(
         stream: chatRoomStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return const Text('there is an erro') ;
+            return const Text('there is an erro');
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -63,6 +65,8 @@ class _HomePageState extends State<HomePage> {
       return '$a _$b';
     }
   }
+
+
 
   var queryResultSet = [];
   var tempSearchStore = [];
@@ -132,13 +136,18 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20.0,
                               fontWeight: FontWeight.w500),
                         ))
-                      : const Text(
-                          'duo-app',
-                          style: TextStyle(
-                              color: Color(0xffE0B993),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26.0),
-                        ),
+                      :  const Row(
+                        children: [
+                          
+                           Text(
+                              'duo-app',
+                              style: TextStyle(
+                                  color: Color(0xffE0B993),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26.0),
+                            ),
+                        ],
+                      ),
                   GestureDetector(
                     onTap: () {
                       search = true;
@@ -196,6 +205,8 @@ class _HomePageState extends State<HomePage> {
                             return buildResultCard(element);
                           }).toList())
                       : chatRoomList(),
+                  const Spacer(),
+                  buildButtonNewMessage(context)
                 ],
               ),
             )
@@ -205,7 +216,44 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-/// Result of our searcho in the database 
+//myMessage sender button
+  Widget buildButtonNewMessage(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        search = true;
+        setState(() {});
+      },
+      child: Container(
+        width: 60,
+        height: 60,
+        margin: const EdgeInsets.only(
+          left: 300,
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xffCA7236),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: search
+            ? GestureDetector(
+                onTap: () {
+                  search = false;
+                  setState(() {});
+                },
+                child: const Icon(
+                  Icons.close,
+                  color: Color(0xffE0B993),
+                ),
+              )
+            : const Icon(
+                Icons.message,
+                size: 30,
+                color: Color(0xffE0B993),
+              ),
+      ),
+    );
+  }
+
+  /// Result of our searcho in the database
   Widget buildResultCard(data) {
     return GestureDetector(
       onTap: () async {
@@ -217,13 +265,13 @@ class _HomePageState extends State<HomePage> {
           'username': [widget.myUserName, data['username']],
         };
         await DatabaseMethods().createChatRoom(chatRoomId, chatRoomInfoMap);
-        // ignore: use_build_context_synchronously
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ChatAp(
                     name: data['Name'],
-                    profileurl: data['Phote'] ?? const CircleAvatar(child: Icon(Icons.person_2_outlined),),
+                    profileurl:
+                        data['Phote'],
                     username: data['username'])));
       },
       child: Container(
@@ -236,14 +284,24 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(10)),
             child: Row(children: [
-              ClipRRect(
+               data['Phote'] == ''
+              ? CircleAvatar(
+                  child: Center(
+                    child: Text(
+                      data['username'][0],
+                      style: const TextStyle(fontSize: 25),
+                    ),
+                  ),
+                )
+              : ClipRRect(
                   borderRadius: BorderRadius.circular(60),
                   child: Image.network(
-                    data['Phote'] ?? 'github.com/mikandadacunha.pg',
-                    height: 50,
-                    width: 50,
+                    data['Phote'],
+                    height: 70,
+                    width: 70,
                     fit: BoxFit.cover,
-                  )),
+                  ),
+                ),
               const SizedBox(
                 width: 10.0,
               ),
@@ -281,7 +339,7 @@ class _HomePageState extends State<HomePage> {
 
 class ChatRoomListTile extends StatefulWidget {
   final String lastMessage, chatRoomId, myUserName, time;
-   ChatRoomListTile(
+  ChatRoomListTile(
       {required this.chatRoomId,
       required this.lastMessage,
       required this.myUserName,
@@ -313,7 +371,8 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     getthisUserInfo();
     super.initState();
   }
-/// my message body listview
+
+  /// my message body listview
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -344,14 +403,17 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                username,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 18.0),
+              GestureDetector(
+                
+                child: Text(
+                  username,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18.0),
+                ),
               ),
               ////Messege body or description section, we find here all setting about de body messege
               Container(
-                width: MediaQuery.of(context).size.width/3,
+                width: MediaQuery.of(context).size.width / 3,
                 child: Text(
                   widget.lastMessage,
                   overflow: TextOverflow.ellipsis,
