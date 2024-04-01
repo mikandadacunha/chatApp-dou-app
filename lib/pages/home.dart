@@ -66,8 +66,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
-
   var queryResultSet = [];
   var tempSearchStore = [];
 //// initial seach to list every iqual name to the first letter
@@ -136,18 +134,17 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20.0,
                               fontWeight: FontWeight.w500),
                         ))
-                      :  const Row(
-                        children: [
-                          
-                           Text(
+                      : const Row(
+                          children: [
+                            Text(
                               'duo-app',
                               style: TextStyle(
                                   color: Color(0xffE0B993),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 26.0),
                             ),
-                        ],
-                      ),
+                          ],
+                        ),
                   GestureDetector(
                     onTap: () {
                       search = true;
@@ -270,8 +267,7 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(
                 builder: (context) => ChatAp(
                     name: data['Name'],
-                    profileurl:
-                        data['Phote'],
+                    profileurl: data['Phote'],
                     username: data['username'])));
       },
       child: Container(
@@ -284,24 +280,24 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(10)),
             child: Row(children: [
-               data['Phote'] == ''
-              ? CircleAvatar(
-                  child: Center(
-                    child: Text(
-                      data['username'][0],
-                      style: const TextStyle(fontSize: 25),
+              data['Phote'] == ''
+                  ? CircleAvatar(
+                      child: Center(
+                        child: Text(
+                          data['username'][0],
+                          style: const TextStyle(fontSize: 25),
+                        ),
+                      ),
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(60),
+                      child: Image.network(
+                        data['Phote'],
+                        height: 70,
+                        width: 70,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Image.network(
-                    data['Phote'],
-                    height: 70,
-                    width: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
               const SizedBox(
                 width: 10.0,
               ),
@@ -404,7 +400,16 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
-                
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatAp(
+                                name: name,
+                                profileurl: profilePicUrl,
+                                username: username,
+                              )));
+                },
                 child: Text(
                   username,
                   style: const TextStyle(
